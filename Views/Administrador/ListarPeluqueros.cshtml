@@ -1,64 +1,146 @@
 ﻿@model IEnumerable<dynamic>
 
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0">📋 Listado de Peluqueros</h2>
-        <a asp-action="RegistrarPeluquero" class="btn btn-primary">
-            ➕ Registrar Peluquero
+@{
+    ViewData["Title"] = "Gestión de Peluqueros";
+}
+
+<div class="container mt-4 fade-in">
+    <!-- Encabezado -->
+    <div class="card mb-4 border-0 bg-gradient-primary text-white">
+        <div class="card-body p-4">
+            <div class="d-flex align-items-center justify-content-between">
+                <div class="flex-grow-1">
+                    <h2 class="mb-1">📋 Gestión de Peluqueros</h2>
+                    <p class="mb-0 opacity-75">Administra tu equipo de profesionales</p>
+                </div>
+                <div class="d-none d-md-block">
+                    <a asp-action="RegistrarPeluquero" class="btn btn-light btn-lg">
+                        <i class="bi bi-person-plus me-2"></i>Registrar Peluquero
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navegación -->
+    <div class="mb-3">
+        <a asp-action="Dashboard" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2"></i>Volver al Dashboard
         </a>
     </div>
 
-    <div class="card shadow rounded-3">
-        <div class="card-body">
-            <table class="table table-hover align-middle">
-                <thead class="table-dark text-center">
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Apellido</th>
-                        <th>Mail</th>
-                        <th>Jornadas</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var p in Model)
-                    {
-                        <tr>
-                            <td>@p.Nombre</td>
-                            <td>@p.Apellido</td>
-                            <td>@p.Mail</td>
-                            <td>
-                                <ul class="list-unstyled mb-0">
-                                    @foreach (var j in p.Jornadas)
-                                    {
-                                        @if (j.HoraDeInicio != j.HoraDeFin && j.Activo ==true)
+    <!-- Botón móvil -->
+    <div class="d-md-none mb-3">
+        <a asp-action="RegistrarPeluquero" class="btn btn-primary w-100">
+            <i class="bi bi-person-plus me-2"></i>Registrar Nuevo Peluquero
+        </a>
+    </div>
+
+    <!-- Tabla de Peluqueros -->
+    <div class="card border-0 shadow-md-custom">
+        <div class="card-header bg-light">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-people me-2"></i>Listado de Peluqueros</h5>
+                <span class="badge bg-primary">@Model.Count() peluquero@(Model.Count() != 1 ? "s" : "")</span>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            @if (!Model.Any())
+            {
+                <div class="text-center p-5">
+                    <i class="bi bi-inbox" style="font-size: 4rem; color: #ccc;"></i>
+                    <p class="text-muted mt-3 mb-4">No hay peluqueros registrados</p>
+                    <a asp-action="RegistrarPeluquero" class="btn btn-primary">
+                        <i class="bi bi-person-plus me-2"></i>Registrar Primer Peluquero
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th class="ps-4">Peluquero</th>
+                                <th>Contacto</th>
+                                <th>Jornadas Activas</th>
+                                <th class="text-center pe-4">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var p in Model)
+                            {
+                                var jornadasActivas = p.Jornadas.Where(j => j.HoraDeInicio != j.HoraDeFin && j.Activo == true).ToList();
+
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="d-flex align-items-center">
+                                            <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center text-white me-3"
+                                                 style="width: 40px; height: 40px; min-width: 40px;">
+                                                <i class="bi bi-person"></i>
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold">@p.Nombre @p.Apellido</div>
+                                                <small class="text-muted">ID: @p.Id</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div>
+                                            <i class="bi bi-envelope me-1 text-primary"></i>
+                                            <span>@p.Mail</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        @if (jornadasActivas.Any())
                                         {
-                                            <li>
-                                                <span class="fw-bold">@j.Dia:</span>
-                                                @j.HoraDeInicio - @j.HoraDeFin
-                                                <span class="badge @(j.Activo ? "bg-success" : "bg-secondary") ms-1">
-                                                    @(j.Activo ? "Activo" : "Inactivo")
-                                                </span>
-                                            </li>
+                                            <div class="d-flex flex-wrap gap-1">
+                                                @foreach (var j in jornadasActivas)
+                                                {
+                                                    <span class="badge bg-success" title="@j.HoraDeInicio - @j.HoraDeFin">
+                                                        @j.Dia
+                                                    </span>
+                                                }
+                                            </div>
+                                            <small class="text-muted d-block mt-1">
+                                                @jornadasActivas.Count jornada@(jornadasActivas.Count != 1 ? "s" : "")
+                                            </small>
                                         }
-                                    }
-                                </ul>
-                            </td>
-                            <td class="text-center">
-                                <a asp-action="EditarPeluquero" asp-route-id="@p.Id" 
-                                   class="btn btn-sm btn-warning me-2">
-                                    ✏️ Editar
-                                </a>
-                                <a asp-action="EliminarPeluquero" asp-route-id="@p.Id" 
-                                   class="btn btn-sm btn-danger"
-                                   onclick="return confirm('¿Seguro que deseas eliminar a este peluquero?');">
-                                    🗑️ Eliminar
-                                </a>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">Sin jornadas</span>
+                                        }
+                                    </td>
+                                    <td class="text-center pe-4">
+                                        <div class="btn-group" role="group">
+                                            <a asp-action="EditarPeluquero" asp-route-id="@p.Id"
+                                               class="btn btn-sm btn-warning"
+                                               title="Editar peluquero">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <a asp-action="EliminarPeluquero" asp-route-id="@p.Id"
+                                               class="btn btn-sm btn-danger"
+                                               onclick="return confirm('¿Estás seguro de eliminar a @p.Nombre @p.Apellido?');"
+                                               title="Eliminar peluquero">
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
         </div>
     </div>
+
+    <!-- Información adicional -->
+    @if (Model.Any())
+    {
+        <div class="alert alert-info mt-4">
+            <i class="bi bi-info-circle me-2"></i>
+            <strong>Nota:</strong> Asegurate de que cada peluquero tenga al menos una jornada activa para poder recibir turnos.
+        </div>
+    }
 </div>

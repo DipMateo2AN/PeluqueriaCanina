@@ -1,28 +1,120 @@
 ﻿@{
-    ViewData["Title"] = "Detalle de " + ViewBag.Peluquero;
+    ViewData["Title"] = "Detalle del Peluquero";
 }
 
-<div class="container mt-5">
-    <div class="card shadow-sm">
-        <div class="card-header bg-warning text-dark text-center">
-            <h4 class="mb-4">💈 Reporte de @ViewBag.Peluquero (@ViewBag.Servicio)</h4>
+<div class="container mt-4 fade-in">
+    <!-- Encabezado -->
+    <div class="card mb-4 border-0 bg-gradient-warning text-white">
+        <div class="card-body p-4">
+            <div class="d-flex align-items-center">
+                <div class="flex-grow-1">
+                    <h2 class="mb-1">💈 @ViewBag.Peluquero</h2>
+                    <p class="mb-0 opacity-75">Detalle de rendimiento en @ViewBag.Servicio</p>
+                </div>
+                <div class="d-none d-md-block">
+                    <i class="bi bi-person-circle" style="font-size: 4rem; opacity: 0.3;"></i>
+                </div>
+            </div>
         </div>
-        <div class="card-body text-center">
-            <canvas id="graficoTurnos" style="max-height:400px"></canvas>
+    </div>
 
-            <div class="mt-4">
-                @{
-                    var recaudado = ViewBag.Recaudado as decimal? ?? 0m;
-                    string claseColor = recaudado < 40000 ? "text-danger fw-bold" :
-                    recaudado < 50000 ? "text-warning fw-bold" : "text-success fw-bold";
-                }
-                <h5>💵 Total Recaudado: <span class="@claseColor">$@String.Format("{0:N2}", recaudado)</span></h5>
+    <!-- Navegación -->
+    <div class="mb-3">
+        <a asp-action="DetalleServicio" asp-route-servicio="@(Html.Raw(ViewBag.Servicio))" class="btn btn-outline-secondary me-2">
+            <i class="bi bi-arrow-left me-2"></i>Volver al Servicio
+        </a>
+        <a asp-action="Reportes" class="btn btn-outline-primary">
+            <i class="bi bi-house me-2"></i>Ir a Reportes
+        </a>
+    </div>
+
+    <!-- Contenedor Principal -->
+    <div class="row g-4">
+        <!-- Gráfico -->
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-md-custom h-100">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="bi bi-pie-chart me-2"></i>Distribución de Turnos</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="text-center">
+                        <canvas id="graficoTurnos" style="max-height:350px"></canvas>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="card-footer text-center">
-            <a asp-action="DetalleServicio" asp-route-servicio="@(Html.Raw(ViewBag.Servicio))" class="btn btn-secondary">⬅ Volver al servicio</a>
-            <a asp-action="Reportes" class="btn btn-outline-primary ms-2">🏠 Volver al inicio de reportes</a>
+        <!-- Estadísticas -->
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-md-custom h-100">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="bi bi-clipboard-data me-2"></i>Resumen</h5>
+                </div>
+                <div class="card-body p-4">
+                    @{
+                        var realizados = ViewBag.Realizados ?? 0;
+                        var cancelados = ViewBag.Cancelados ?? 0;
+                        var total = realizados + cancelados;
+                        var tasaExito = total > 0 ? ((double)realizados / total * 100) : 0;
+                        var recaudado = ViewBag.Recaudado as decimal? ?? 0m;
+                        string claseColor = recaudado < 40000 ? "danger" :
+                                          recaudado < 50000 ? "warning" : "success";
+                    }
+
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="fw-bold">Total de Turnos</span>
+                            <span class="badge bg-primary">@total</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-success"><i class="bi bi-check-circle me-1"></i>Realizados</span>
+                            <span class="badge bg-success">@realizados</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span class="text-danger"><i class="bi bi-x-circle me-1"></i>Cancelados</span>
+                            <span class="badge bg-danger">@cancelados</span>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="mb-4">
+                        <p class="text-muted mb-2 small">Tasa de Éxito</p>
+                        <div class="progress" style="height: 25px;">
+                            <div class="progress-bar bg-success" role="progressbar"
+                                 style="width: @tasaExito.ToString("F1")%"
+                                 aria-valuenow="@tasaExito" aria-valuemin="0" aria-valuemax="100">
+                                @tasaExito.ToString("F1")%
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="text-center p-3 bg-light rounded">
+                        <p class="text-muted mb-2 small">💵 Total Recaudado</p>
+                        <h3 class="mb-0 text-@claseColor">$@String.Format("{0:N2}", recaudado)</h3>
+                        @if (claseColor == "success")
+                        {
+                            <small class="text-success mt-2 d-block">
+                                <i class="bi bi-trophy-fill me-1"></i>Excelente desempeño
+                            </small>
+                        }
+                        else if (claseColor == "warning")
+                        {
+                            <small class="text-warning mt-2 d-block">
+                                <i class="bi bi-graph-up me-1"></i>Buen desempeño
+                            </small>
+                        }
+                        else
+                        {
+                            <small class="text-muted mt-2 d-block">
+                                <i class="bi bi-info-circle me-1"></i>Puede mejorar
+                            </small>
+                        }
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -36,9 +128,13 @@
             datasets: [{
                 label: "Turnos de @ViewBag.Peluquero",
                 data: [@(ViewBag.Realizados ?? 0), @(ViewBag.Cancelados ?? 0)],
-                backgroundColor: ["rgba(54, 162, 235, 0.7)", "rgba(255, 99, 132, 0.7)"],
+                backgroundColor: [
+                    "rgba(86, 171, 47, 0.8)",
+                    "rgba(235, 67, 73, 0.8)"
+                ],
                 borderColor: "white",
-                borderWidth: 2
+                borderWidth: 3,
+                hoverOffset: 10
             }]
         };
 
@@ -47,9 +143,46 @@
             type: "doughnut",
             data: datos,
             options: {
+                responsive: true,
+                maintainAspectRatio: true,
                 plugins: {
-                    legend: { position: "bottom" },
-                    title: { display: true, text: "Distribución de Turnos" }
+                    legend: {
+                        position: "bottom",
+                        labels: {
+                            padding: 15,
+                            font: {
+                                size: 13,
+                                family: "'Segoe UI', sans-serif"
+                            }
+                        }
+                    },
+                    title: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        padding: 12,
+                        titleFont: {
+                            size: 14,
+                            weight: 'bold'
+                        },
+                        bodyFont: {
+                            size: 13
+                        },
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                const value = context.parsed;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                                label += value + ' (' + percentage + '%)';
+                                return label;
+                            }
+                        }
+                    }
                 }
             }
         });

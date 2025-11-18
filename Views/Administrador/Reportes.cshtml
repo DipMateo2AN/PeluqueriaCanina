@@ -1,14 +1,77 @@
 ﻿@{
-    ViewData["Title"] = "Reportes - Servicios más elegidos";
+    ViewData["Title"] = "Reportes";
 }
 
-<div class="container mt-5">
-    <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white">
-            <h4 class="mb-0 text-center">📊 Servicios más seleccionados</h4>
+<div class="container mt-4 fade-in">
+    <!-- Encabezado -->
+    <div class="card mb-4 border-0 bg-gradient-info text-white">
+        <div class="card-body p-4">
+            <div class="d-flex align-items-center">
+                <div class="flex-grow-1">
+                    <h2 class="mb-1">📊 Reportes y Estadísticas</h2>
+                    <p class="mb-0 opacity-75">Análisis de servicios más solicitados</p>
+                </div>
+                <div class="d-none d-md-block">
+                    <i class="bi bi-graph-up-arrow" style="font-size: 4rem; opacity: 0.3;"></i>
+                </div>
+            </div>
         </div>
-        <div class="card-body text-center">
-            <canvas id="graficoServicios" style="max-height:400px"></canvas>
+    </div>
+
+    <!-- Botón Volver -->
+    <div class="mb-3">
+        <a asp-action="Dashboard" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2"></i>Volver al Dashboard
+        </a>
+    </div>
+
+    <!-- Gráfico Principal -->
+    <div class="card border-0 shadow-md-custom">
+        <div class="card-header bg-light">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-pie-chart me-2"></i>Servicios Más Seleccionados</h5>
+                <span class="badge bg-primary">Interactivo</span>
+            </div>
+        </div>
+        <div class="card-body p-4">
+            <div class="alert alert-info mb-4">
+                <i class="bi bi-info-circle me-2"></i>
+                <strong>Tip:</strong> Hacé clic en cualquier sección del gráfico para ver detalles del servicio
+            </div>
+            <div class="text-center">
+                <canvas id="graficoServicios" style="max-height:450px"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resumen de Datos -->
+    <div class="row g-4 mt-4">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-md-custom h-100 bg-gradient-primary text-white">
+                <div class="card-body text-center p-4">
+                    <i class="bi bi-star-fill" style="font-size: 3rem; opacity: 0.5;"></i>
+                    <h3 class="mt-3 mb-1" id="servicioTop">-</h3>
+                    <p class="mb-0 opacity-75">Servicio Más Solicitado</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-md-custom h-100 bg-gradient-success text-white">
+                <div class="card-body text-center p-4">
+                    <i class="bi bi-clipboard-check" style="font-size: 3rem; opacity: 0.5;"></i>
+                    <h3 class="mt-3 mb-1" id="totalServicios">-</h3>
+                    <p class="mb-0 opacity-75">Total de Servicios</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-md-custom h-100 bg-gradient-warning text-white">
+                <div class="card-body text-center p-4">
+                    <i class="bi bi-calendar-check" style="font-size: 3rem; opacity: 0.5;"></i>
+                    <h3 class="mt-3 mb-1" id="turnosRealizados">-</h3>
+                    <p class="mb-0 opacity-75">Turnos Realizados</p>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -20,26 +83,42 @@
         const servicios = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewBag.Servicios ?? new List<string>()));
         const cantidades = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewBag.Cantidades ?? new List<int>()));
 
+        // Actualizar resumen
+        if (servicios.length > 0) {
+            const totalTurnos = cantidades.reduce((a, b) => a + b, 0);
+            const maxIndex = cantidades.indexOf(Math.max(...cantidades));
+
+            document.getElementById('servicioTop').textContent = servicios[maxIndex] || '-';
+            document.getElementById('totalServicios').textContent = servicios.length;
+            document.getElementById('turnosRealizados').textContent = totalTurnos;
+        }
+
         const ctx = document.getElementById('graficoServicios').getContext('2d');
         new Chart(ctx, {
             type: 'pie',
             data: {
                 labels: servicios,
                 datasets: [{
-                    label: 'Servicios más elegidos',
+                    label: 'Cantidad de Servicios',
                     data: cantidades,
                     backgroundColor: [
-                        'rgba(54, 162, 235, 0.7)',
-                        'rgba(255, 99, 132, 0.7)',
-                        'rgba(255, 206, 86, 0.7)',
-                        'rgba(75, 192, 192, 0.7)',
-                        'rgba(153, 102, 255, 0.7)'
+                        'rgba(102, 126, 234, 0.8)',
+                        'rgba(118, 75, 162, 0.8)',
+                        'rgba(255, 99, 132, 0.8)',
+                        'rgba(255, 206, 86, 0.8)',
+                        'rgba(75, 192, 192, 0.8)',
+                        'rgba(54, 162, 235, 0.8)',
+                        'rgba(153, 102, 255, 0.8)',
+                        'rgba(255, 159, 64, 0.8)'
                     ],
                     borderColor: 'white',
-                    borderWidth: 2
+                    borderWidth: 3,
+                    hoverOffset: 10
                 }]
             },
             options: {
+                responsive: true,
+                maintainAspectRatio: true,
                 onClick: (evt, elements) => {
                     if (elements.length > 0) {
                         const index = elements[0].index;
@@ -48,7 +127,40 @@
                     }
                 },
                 plugins: {
-                    legend: { position: 'bottom' }
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 15,
+                            font: {
+                                size: 13,
+                                family: "'Segoe UI', sans-serif"
+                            }
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        padding: 12,
+                        titleFont: {
+                            size: 14,
+                            weight: 'bold'
+                        },
+                        bodyFont: {
+                            size: 13
+                        },
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                const value = context.parsed;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = ((value / total) * 100).toFixed(1);
+                                label += value + ' (' + percentage + '%)';
+                                return label;
+                            }
+                        }
+                    }
                 }
             }
         });

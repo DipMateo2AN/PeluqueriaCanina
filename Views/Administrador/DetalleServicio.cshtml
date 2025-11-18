@@ -1,17 +1,77 @@
 ﻿@{
-    ViewData["Title"] = "Detalle del servicio " + ViewBag.Servicio;
+    ViewData["Title"] = "Detalle del Servicio";
 }
 
-<div class="container mt-5">
-    <div class="card shadow-sm">
-        <div class="card-header bg-info text-white">
-            <h4 class="mb-0 text-center">💈 Peluqueros que más realizaron @ViewBag.Servicio</h4>
+<div class="container mt-4 fade-in">
+    <!-- Encabezado -->
+    <div class="card mb-4 border-0 bg-gradient-success text-white">
+        <div class="card-body p-4">
+            <div class="d-flex align-items-center">
+                <div class="flex-grow-1">
+                    <h2 class="mb-1">💈 Detalle del Servicio: @ViewBag.Servicio</h2>
+                    <p class="mb-0 opacity-75">Análisis de peluqueros por servicio</p>
+                </div>
+                <div class="d-none d-md-block">
+                    <i class="bi bi-scissors" style="font-size: 4rem; opacity: 0.3;"></i>
+                </div>
+            </div>
         </div>
-        <div class="card-body text-center">
-            <canvas id="graficoPeluqueros" style="max-height:400px"></canvas>
+    </div>
+
+    <!-- Navegación -->
+    <div class="mb-3">
+        <a asp-action="Reportes" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2"></i>Volver a Reportes
+        </a>
+    </div>
+
+    <!-- Gráfico de Barras -->
+    <div class="card border-0 shadow-md-custom">
+        <div class="card-header bg-light">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-bar-chart me-2"></i>Rendimiento por Peluquero</h5>
+                <span class="badge bg-success">Clickeable</span>
+            </div>
         </div>
-        <div class="card-footer text-center">
-            <a asp-action="Reportes" class="btn btn-secondary">⬅ Volver al reporte principal</a>
+        <div class="card-body p-4">
+            <div class="alert alert-success mb-4">
+                <i class="bi bi-info-circle me-2"></i>
+                <strong>Tip:</strong> Hacé clic en cualquier barra para ver el detalle completo del peluquero
+            </div>
+            <div class="text-center">
+                <canvas id="graficoPeluqueros" style="max-height:450px"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Estadísticas Resumen -->
+    <div class="row g-4 mt-4">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-md-custom h-100 bg-gradient-primary text-white">
+                <div class="card-body text-center p-4">
+                    <i class="bi bi-person-badge" style="font-size: 3rem; opacity: 0.5;"></i>
+                    <h3 class="mt-3 mb-1" id="peluqueroTop">-</h3>
+                    <p class="mb-0 opacity-75">Peluquero Destacado</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-md-custom h-100 bg-gradient-warning text-white">
+                <div class="card-body text-center p-4">
+                    <i class="bi bi-people" style="font-size: 3rem; opacity: 0.5;"></i>
+                    <h3 class="mt-3 mb-1" id="totalPeluqueros">-</h3>
+                    <p class="mb-0 opacity-75">Peluqueros Activos</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-md-custom h-100 bg-gradient-info text-white">
+                <div class="card-body text-center p-4">
+                    <i class="bi bi-check-circle" style="font-size: 3rem; opacity: 0.5;"></i>
+                    <h3 class="mt-3 mb-1" id="totalRealizados">-</h3>
+                    <p class="mb-0 opacity-75">Total Realizados</p>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -24,6 +84,16 @@
         const cantidades = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewBag.Cantidades ?? new List<int>()));
         const servicio = "@Html.Raw(ViewBag.Servicio ?? "")";
 
+        // Actualizar resumen
+        if (peluqueros.length > 0) {
+            const totalRealizados = cantidades.reduce((a, b) => a + b, 0);
+            const maxIndex = cantidades.indexOf(Math.max(...cantidades));
+
+            document.getElementById('peluqueroTop').textContent = peluqueros[maxIndex] || '-';
+            document.getElementById('totalPeluqueros').textContent = peluqueros.length;
+            document.getElementById('totalRealizados').textContent = totalRealizados;
+        }
+
         const ctx = document.getElementById('graficoPeluqueros').getContext('2d');
         new Chart(ctx, {
             type: 'bar',
@@ -32,12 +102,16 @@
                 datasets: [{
                     label: 'Cantidad de ' + servicio,
                     data: cantidades,
-                    backgroundColor: 'rgba(75, 192, 192, 0.7)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 1
+                    backgroundColor: 'rgba(86, 171, 47, 0.8)',
+                    borderColor: 'rgba(86, 171, 47, 1)',
+                    borderWidth: 2,
+                    borderRadius: 8,
+                    hoverBackgroundColor: 'rgba(168, 224, 99, 0.9)'
                 }]
             },
             options: {
+                responsive: true,
+                maintainAspectRatio: true,
                 onClick: (evt, elements) => {
                     if (elements.length > 0) {
                         const index = elements[0].index;
@@ -46,9 +120,54 @@
                     }
                 },
                 scales: {
-                    y: { beginAtZero: true, ticks: { stepSize: 1 } }
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1,
+                            font: {
+                                size: 12,
+                                family: "'Segoe UI', sans-serif"
+                            }
+                        },
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            font: {
+                                size: 12,
+                                family: "'Segoe UI', sans-serif"
+                            }
+                        },
+                        grid: {
+                            display: false
+                        }
+                    }
                 },
-                plugins: { legend: { display: false } }
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            font: {
+                                size: 13,
+                                family: "'Segoe UI', sans-serif"
+                            }
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        padding: 12,
+                        titleFont: {
+                            size: 14,
+                            weight: 'bold'
+                        },
+                        bodyFont: {
+                            size: 13
+                        }
+                    }
+                }
             }
         });
     </script>
