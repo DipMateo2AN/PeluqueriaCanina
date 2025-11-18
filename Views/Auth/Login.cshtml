@@ -1,40 +1,72 @@
 ﻿@{
-    ViewData["Title"] = "Login";
+    ViewData["Title"] = "Iniciar Sesión";
 }
 
-<div class="container mt-5">
+<div class="container mt-5 fade-in">
     <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-4">
-            <div class="card shadow-lg rounded-3">
-                <div class="card-body p-4">
-                    <h2 class="text-center mb-4">Iniciar Sesión</h2>
-
-                    <form asp-action="Login" method="post">
-                        <div class="mb-3">
-                            <label class="form-label">Email</label>
-                            <input type="email" name="mail" class="form-control" placeholder="tuemail@mail.com" required />
+        <div class="col-md-6 col-lg-5">
+            <!-- Card de Login -->
+            <div class="card border-0 shadow-lg">
+                <div class="card-body p-5">
+                    <!-- Logo/Icono -->
+                    <div class="text-center mb-4">
+                        <div class="bg-gradient-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                             style="width: 80px; height: 80px;">
+                            <i class="bi bi-scissors text-white" style="font-size: 2.5rem;"></i>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Contraseña</label>
-                            <input type="password" name="contraseña" class="form-control" placeholder="********" required />
+                        <h2 class="fw-bold">Bienvenido</h2>
+                        <p class="text-muted">Ingresá a tu cuenta de Peluquería Canina</p>
+                    </div>
+
+                    <!-- Formulario -->
+                    <form asp-action="Login" method="post">
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">
+                                <i class="bi bi-envelope me-2"></i>Email
+                            </label>
+                            <input type="email" name="mail" class="form-control form-control-lg"
+                                   placeholder="tuemail@mail.com" required autocomplete="email" />
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">
+                                <i class="bi bi-lock me-2"></i>Contraseña
+                            </label>
+                            <input type="password" name="contraseña" class="form-control form-control-lg"
+                                   placeholder="••••••••" required autocomplete="current-password" />
                         </div>
 
                         @if (ViewBag.Error != null)
                         {
-                            <div class="alert alert-danger text-center" role="alert">
-                                @ViewBag.Error
+                            <div class="alert alert-danger d-flex align-items-center" role="alert">
+                                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                <div>@ViewBag.Error</div>
                             </div>
                         }
 
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary">Ingresar</button>
+                        <div class="d-grid gap-2 mb-4">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar Sesión
+                            </button>
                         </div>
                     </form>
 
-                    <div class="text-center mt-3">
-                        <a asp-action="Register">¿No tenés cuenta? Registrate</a>
+                    <!-- Registro -->
+                    <div class="text-center pt-3 border-top">
+                        <p class="text-muted mb-2">¿No tenés cuenta?</p>
+                        <a asp-action="Register" class="btn btn-outline-primary">
+                            <i class="bi bi-person-plus me-2"></i>Crear cuenta nueva
+                        </a>
                     </div>
                 </div>
+            </div>
+
+            <!-- Información adicional -->
+            <div class="text-center mt-4">
+                <p class="text-muted small">
+                    <i class="bi bi-shield-check me-1"></i>
+                    Tus datos están seguros con nosotros
+                </p>
             </div>
         </div>
     </div>

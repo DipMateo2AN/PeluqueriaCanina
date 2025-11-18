@@ -1,52 +1,151 @@
 ﻿@{
-    ViewData["Title"] = "Dashboard";
+    ViewData["Title"] = "Dashboard Cliente";
 }
 
-<div class="card shadow-sm mt-4">
-    <div class="card-header bg-primary text-white">
-        <h4 class="mb-0">Bienvenido @ViewBag.Nombre 👋</h4>
+<div class="container mt-4 fade-in">
+    <!-- Encabezado de Bienvenida -->
+    <div class="card mb-4 border-0 bg-gradient-primary text-white">
+        <div class="card-body p-4">
+            <div class="d-flex align-items-center">
+                <div class="flex-grow-1">
+                    <h2 class="mb-1">¡Hola, @ViewBag.Nombre! 👋</h2>
+                    <p class="mb-0 opacity-75">Bienvenido a tu panel de gestión de mascotas y turnos</p>
+                </div>
+                <div class="d-none d-md-block">
+                    <i class="bi bi-person-circle" style="font-size: 4rem; opacity: 0.3;"></i>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="card-body">
-        <p class="text-muted mb-4">
-            Desde aquí podés gestionar todo lo relacionado a tus <strong>mascotas</strong> y <strong>turnos</strong>.
-        </p>
 
-        <div class="row g-4">
-            <!-- 🐶 Mascotas -->
-            <div class="col-md-4">
-                <div class="card h-100 shadow-sm border-0">
-                    <div class="card-header bg-info text-white">
-                        <h5 class="mb-0">🐶 Mis Mascotas</h5>
+    <!-- Accesos Rápidos -->
+    <div class="row g-4 mb-4">
+        <!-- Mascotas -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 border-0 shadow-md-custom">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3">
+                        <i class="bi bi-heart-fill text-danger" style="font-size: 3rem;"></i>
                     </div>
-                    <div class="card-body d-flex flex-column">
-                        <p class="flex-grow-1">Registrar, editar o eliminar tus mascotas.</p>
-                        <a href="/Mascota/Index" class="btn btn-info text-white mt-auto">Ir a Mascotas</a>
-                    </div>
+                    <h5 class="card-title mb-2">Mis Mascotas</h5>
+                    <p class="card-text text-muted small mb-3">Gestiona la información de tus mascotas</p>
+                    <a asp-controller="Mascota" asp-action="Index" class="btn btn-primary w-100">
+                        <i class="bi bi-arrow-right-circle me-2"></i>Ver Mascotas
+                    </a>
                 </div>
             </div>
+        </div>
 
-            <!-- 📅 Turnos -->
-            <div class="col-md-4">
-                <div class="card h-100 shadow-sm border-0">
-                    <div class="card-header bg-success text-white">
-                        <h5 class="mb-0">📅 Turnos</h5>
+        <!-- Turnos -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 border-0 shadow-md-custom">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3">
+                        <i class="bi bi-calendar-check-fill text-success" style="font-size: 3rem;"></i>
                     </div>
-                    <div class="card-body d-flex flex-column">
-                        <p class="flex-grow-1">Solicitá un turno para una de tus mascotas.</p>
-                        <a href="/Turno/Index" class="btn btn-success mt-auto">Ir a Turnos</a>
-                    </div>
+                    <h5 class="card-title mb-2">Mis Turnos</h5>
+                    <p class="card-text text-muted small mb-3">Consulta y gestiona tus turnos</p>
+                    <a asp-controller="Turno" asp-action="Index" class="btn btn-success w-100">
+                        <i class="bi bi-arrow-right-circle me-2"></i>Ver Turnos
+                    </a>
                 </div>
             </div>
+        </div>
 
-            <!-- ⚙️ Configuración -->
-            <div class="col-md-4">
-                <div class="card h-100 shadow-sm border-0">
-                    <div class="card-header bg-secondary text-white">
-                        <h5 class="mb-0">⚙️ Configuración</h5>
+        <!-- Reservar Turno -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 border-0 shadow-md-custom">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3">
+                        <i class="bi bi-plus-circle-fill text-info" style="font-size: 3rem;"></i>
                     </div>
-                    <div class="card-body d-flex flex-column">
-                        <p class="flex-grow-1">Actualizar tus datos o cambiar tu contraseña.</p>
-                        <a href="/Cliente/Perfil" class="btn btn-secondary mt-auto">Ir a Perfil</a>
+                    <h5 class="card-title mb-2">Reservar Turno</h5>
+                    <p class="card-text text-muted small mb-3">Agenda un nuevo turno para tu mascota</p>
+                    <a asp-controller="Turno" asp-action="Crear" class="btn btn-info w-100">
+                        <i class="bi bi-arrow-right-circle me-2"></i>Nuevo Turno
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagos -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 border-0 shadow-md-custom">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3">
+                        <i class="bi bi-credit-card-fill text-warning" style="font-size: 3rem;"></i>
+                    </div>
+                    <h5 class="card-title mb-2">Mis Pagos</h5>
+                    <p class="card-text text-muted small mb-3">Revisa el historial de pagos</p>
+                    <a asp-controller="Pago" asp-action="MisPagos" class="btn btn-warning w-100">
+                        <i class="bi bi-arrow-right-circle me-2"></i>Ver Pagos
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Información Adicional -->
+    <div class="row g-4">
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-md-custom h-100">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="bi bi-info-circle me-2"></i>Información Importante</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-3">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            <strong>Horario de atención:</strong> Lunes a Sábado de 9:00 a 18:00
+                        </li>
+                        <li class="mb-3">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            <strong>Cancelaciones:</strong> Podés cancelar tu turno hasta 24hs antes
+                        </li>
+                        <li class="mb-3">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            <strong>Pagos:</strong> Aceptamos MercadoPago y efectivo
+                        </li>
+                        <li>
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            <strong>Recordatorio:</strong> Llevá la libreta de vacunación de tu mascota
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-md-custom h-100">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="bi bi-star me-2"></i>Servicios Disponibles</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-2">
+                        <div class="col-6 mb-2">
+                            <div class="p-3 bg-light rounded text-center">
+                                <i class="bi bi-scissors text-primary d-block mb-2" style="font-size: 2rem;"></i>
+                                <small class="fw-bold">Corte</small>
+                            </div>
+                        </div>
+                        <div class="col-6 mb-2">
+                            <div class="p-3 bg-light rounded text-center">
+                                <i class="bi bi-water text-info d-block mb-2" style="font-size: 2rem;"></i>
+                                <small class="fw-bold">Baño</small>
+                            </div>
+                        </div>
+                        <div class="col-6 mb-2">
+                            <div class="p-3 bg-light rounded text-center">
+                                <i class="bi bi-brush text-success d-block mb-2" style="font-size: 2rem;"></i>
+                                <small class="fw-bold">Cepillado</small>
+                            </div>
+                        </div>
+                        <div class="col-6 mb-2">
+                            <div class="p-3 bg-light rounded text-center">
+                                <i class="bi bi-droplet text-warning d-block mb-2" style="font-size: 2rem;"></i>
+                                <small class="fw-bold">Desparasitación</small>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
