@@ -2,55 +2,105 @@
     ViewData["Title"] = "Registro";
 }
 
-<div class="container mt-5">
+<div class="container mt-5 fade-in">
     <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
-            <div class="card shadow-lg rounded-3">
-                <div class="card-body p-4">
-                    <h2 class="text-center mb-4">Registro de Cliente</h2>
+        <div class="col-md-8 col-lg-7">
+            <!-- Card de Registro -->
+            <div class="card border-0 shadow-lg">
+                <div class="card-body p-5">
+                    <!-- Encabezado -->
+                    <div class="text-center mb-4">
+                        <div class="bg-gradient-success rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                             style="width: 80px; height: 80px;">
+                            <i class="bi bi-person-plus text-white" style="font-size: 2.5rem;"></i>
+                        </div>
+                        <h2 class="fw-bold">Crear Cuenta</h2>
+                        <p class="text-muted">Unite a Peluquería Canina y cuidá a tu mejor amigo</p>
+                    </div>
 
+                    <!-- Formulario -->
                     <form asp-action="Register" method="post">
-                        <div class="mb-3">
-                            <label class="form-label">Nombre</label>
-                            <input type="text" name="nombre" class="form-control" required />
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Apellido</label>
-                            <input type="text" name="apellido" class="form-control" required />
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Email</label>
-                            <input type="email" name="mail" class="form-control" required />
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">DNI</label>
-                            <input type="text" name="dni" class="form-control" required />
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Fecha de nacimiento</label>
-                            <input type="date" name="fechaDeNacimiento" class="form-control" required />
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Contraseña</label>
-                            <input type="password" name="contraseña" class="form-control" required />
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    <i class="bi bi-person me-2"></i>Nombre
+                                </label>
+                                <input type="text" name="nombre" class="form-control"
+                                       placeholder="Ej: Juan" required autocomplete="given-name" />
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    <i class="bi bi-person me-2"></i>Apellido
+                                </label>
+                                <input type="text" name="apellido" class="form-control"
+                                       placeholder="Ej: Pérez" required autocomplete="family-name" />
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    <i class="bi bi-envelope me-2"></i>Email
+                                </label>
+                                <input type="email" name="mail" class="form-control"
+                                       placeholder="tuemail@mail.com" required autocomplete="email" />
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    <i class="bi bi-card-text me-2"></i>DNI
+                                </label>
+                                <input type="text" name="dni" class="form-control"
+                                       placeholder="12345678" required maxlength="8" pattern="[0-9]{7,8}" />
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    <i class="bi bi-calendar me-2"></i>Fecha de Nacimiento
+                                </label>
+                                <input type="date" name="fechaDeNacimiento" class="form-control"
+                                       required max="@DateTime.Now.AddYears(-18).ToString("yyyy-MM-dd")" />
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    <i class="bi bi-lock me-2"></i>Contraseña
+                                </label>
+                                <input type="password" name="contraseña" class="form-control"
+                                       placeholder="Mínimo 8 caracteres" required minlength="8" autocomplete="new-password" />
+                            </div>
                         </div>
 
                         @if (ViewBag.Error != null)
                         {
-                            <div class="alert alert-danger text-center" role="alert">
-                                @ViewBag.Error
+                            <div class="alert alert-danger d-flex align-items-center mt-3" role="alert">
+                                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                <div>@ViewBag.Error</div>
                             </div>
                         }
 
-                        <div class="d-grid mt-3">
-                            <button type="submit" class="btn btn-success">Registrarse</button>
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="bi bi-check-circle me-2"></i>Crear Cuenta
+                            </button>
                         </div>
                     </form>
 
-                    <div class="text-center mt-3">
-                        <a asp-action="Login">¿Ya tenés cuenta? Iniciá sesión</a>
+                    <!-- Login -->
+                    <div class="text-center pt-3 border-top mt-4">
+                        <p class="text-muted mb-2">¿Ya tenés cuenta?</p>
+                        <a asp-action="Login" class="btn btn-outline-primary">
+                            <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar Sesión
+                        </a>
                     </div>
                 </div>
+            </div>
+
+            <!-- Información adicional -->
+            <div class="text-center mt-4">
+                <p class="text-muted small">
+                    <i class="bi bi-info-circle me-1"></i>
+                    Al registrarte, aceptás nuestros términos y condiciones
+                </p>
             </div>
         </div>
     </div>
